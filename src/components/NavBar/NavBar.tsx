@@ -19,7 +19,7 @@ export default function NavBar() {
         <div className="flex items-center gap-2">
           {session?.user ? (
             <>
-              <MainButton href={"/posts/create"} size="sm" bgColor="white"><Plus /> Nueva publicación</MainButton>
+              <MainButton href={"/posts/create"} size="sm" bgColor="white"><Plus /> New post</MainButton>
               <ProfileDropdown photo={session.user.image || ""} />
             </>
           ) : (

@@ -1,10 +1,6 @@
 import axios from "axios";
 
-const axiosClient = axios.create(
-    {
-        baseURL: 'https://jsonplaceholder.typicode.com'
-    }
-)
+const axiosClient = axios.create()
 axiosClient.interceptors.request.use(
     (config) => {
         return config;

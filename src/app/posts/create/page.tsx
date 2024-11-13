@@ -3,6 +3,7 @@ import axiosClient from "@/app/interceptors/axiosInterceptor";
 import MainButton from "@/components/MainButton/MainButton";
 import MaxWidth from "@/components/MaxWidth/MaxWidth";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -10,24 +11,36 @@ export default function Page() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const { data: session } = useSession();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    if (!title || title == "" || !body || body == "") {
+    if (!title || title === "" || !body || body === "") {
       return toast.error("El título y el cuerpo son obligatorios");
     }
-    const createPost = () => {
-      axiosClient
-        .post("/posts", {
-          title,
-          body,
-          userId: session?.user?.email,
-        })
-        .then((res) => {
-          console.log(res);
-        });
+  
+    const createPost = async () => {
+      const data = {
+        title: title.trim(),
+        body: body.trim(),
+        userId: session?.user?.email || "defaultUser",
+      };
+  
+      try {
+        const res = await axiosClient.post("/api/posts", data);
+        if(res.status === 200) {
+          toast.success("Publicación creada correctamente");
+          setTitle("");
+          setBody("");
+          router.refresh();
+        }
+      } catch (e) {
+        console.log(e);
+        toast.error("Error al crear la publicación");
+      }
     };
-    createPost();
+  
+    await createPost();
   };
   return (
     <MaxWidth>
